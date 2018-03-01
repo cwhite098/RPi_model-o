@@ -180,8 +180,8 @@ import warnings
 import ctypes as ct
 from collections import namedtuple
 
-import picamera.mmal as mmal
-from picamera.exc import (
+from . import mmal
+from .exc import (
     mmal_check,
     PiCameraError,
     PiCameraMMALError,

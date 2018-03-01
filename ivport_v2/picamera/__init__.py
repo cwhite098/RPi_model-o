@@ -68,7 +68,7 @@ from __future__ import (
 # Make Py2's str equivalent to Py3's
 str = type('')
 
-from picamera.exc import (
+from .exc import (
     PiCameraWarning,
     PiCameraError,
     PiCameraRuntimeError,
@@ -79,8 +79,8 @@ from picamera.exc import (
     PiCameraMMALError,
     mmal_check,
     )
-from picamera.camera import PiCamera
-from picamera.encoders import (
+from .camera import PiCamera
+from .encoders import (
     PiVideoFrame,
     PiVideoFrameType,
     PiEncoder,
@@ -97,12 +97,12 @@ from picamera.encoders import (
     PiCookedMultiImageEncoder,
     PiRawMultiImageEncoder,
     )
-from picamera.renderers import (
+from .renderers import (
     PiRenderer,
     PiOverlayRenderer,
     PiPreviewRenderer,
     PiNullSink,
     )
-from picamera.streams import PiCameraCircularIO, CircularIO
-from picamera.color import Color, Red, Green, Blue, Hue, Lightness, Saturation
+from .streams import PiCameraCircularIO, CircularIO
+from .color import Color, Red, Green, Blue, Hue, Lightness, Saturation
 

@@ -89,7 +89,7 @@ from __future__ import (
 str = type('')
 
 
-import picamera.mmal as mmal
+from . import mmal
 
 
 class PiCameraWarning(Warning):

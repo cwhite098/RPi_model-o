@@ -84,8 +84,8 @@ str = type('')
 
 import ctypes as ct
 
-import picamera.mmal as mmal
-from picamera.exc import (
+from . import mmal
+from .exc import (
     PiCameraRuntimeError,
     PiCameraValueError,
     mmal_check,

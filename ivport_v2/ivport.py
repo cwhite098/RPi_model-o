@@ -28,6 +28,7 @@
 
 import sys
 from functools import reduce
+import io
 
 try:
     import IIC
@@ -39,11 +40,12 @@ except:
     print("install RPi.GPIO: sudo apt-get install python-rpi.gpio")
     sys.exit(0)
 
-try:
-    import picamera
-except:
-    print("There are no picamera module or directory.")
-    sys.exit(0)
+#try:
+from . import picamera
+from picamera import array
+#except:
+ #   print("There are no picamera module or directory.")
+  #  sys.exit(0)
 
 TYPE_QUAD = 0
 TYPE_QUAD2 = 1
@@ -133,14 +135,20 @@ class IVPort():
     # standart capture function doesnt require "camera_v2=True"
     def camera_open(self, camera_v2=False, resolution=None, framerate=None, grayscale=False):
         if self.is_opened: return
-        self.picam = picamera.PiCamera(camera_v2=camera_v2, resolution=resolution, framerate=framerate)
+        self.picam = picamera.PiCamera(camera_v2=True, resolution=resolution, framerate=framerate)
         if grayscale: self.picam.color_effects = (128, 128)
         self.is_opened = True
-
+ 
     # picamera capture
     def camera_capture(self, filename, **options):
         if self.is_opened:
-            self.picam.capture(filename + "_CAM" + str(self.camera) + '.jpg', **options)
+            # capture from camera
+            output = picamera.array.PiRGBArray(self.picam)
+            #convert to np array
+            self.picam.capture(output, 'rgb')
+            return output.array
+            
+            
         else:
             print("Camera is not opened.")
 

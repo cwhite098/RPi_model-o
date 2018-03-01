@@ -70,8 +70,8 @@ import io
 from threading import RLock
 from collections import deque
 
-from picamera.exc import PiCameraValueError
-from picamera.encoders import PiVideoFrame
+from .exc import PiCameraValueError
+from .encoders import PiVideoFrame
 
 
 __all__ = [

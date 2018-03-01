@@ -84,9 +84,9 @@ import fractions
 import threading
 from operator import itemgetter
 
-import picamera.mmal as mmal
-import picamera.bcm_host as bcm_host
-from picamera.exc import (
+from . import mmal
+from . import bcm_host
+from .exc import (
     PiCameraError,
     PiCameraValueError,
     PiCameraRuntimeError,
@@ -98,7 +98,7 @@ from picamera.exc import (
     PiCameraFallback,
     mmal_check,
     )
-from picamera.encoders import (
+from .encoders import (
     PiVideoFrame,
     PiVideoFrameType,
     PiVideoEncoder,
@@ -109,12 +109,12 @@ from picamera.encoders import (
     PiCookedOneImageEncoder,
     PiCookedMultiImageEncoder,
     )
-from picamera.renderers import (
+from .renderers import (
     PiPreviewRenderer,
     PiOverlayRenderer,
     PiNullSink,
     )
-from picamera.color import Color
+from .color import Color
 
 try:
     import RPi.GPIO as GPIO
@@ -438,7 +438,7 @@ class PiCamera(object):
         # IVPORT V2 CODE
         #
         if camera_v2:
-            import IIC
+            from . import IIC
             iviic = IIC.IIC(addr=(0x70), bus_enable =(0x01))
         #
         #
