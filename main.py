@@ -6,16 +6,18 @@ import time
 import numpy as np
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+from threading import Thread
 
 
 class TacTip:
-    def __init__(self, width, height, fps, name, thresh_width, thresh_offset, crop):
+    def __init__(self, width, height, fps, name, thresh_width, thresh_offset, crop, display=True):
         # Init class vars
         self.width = width
         self.height = height
         self.fps = fps
         self.name = name
         self.crop = crop
+        self.display = display
     
         # params for Gaussian thresholding
         self.thresh_width = thresh_width
@@ -27,6 +29,10 @@ class TacTip:
         
         # Set up raw capture - has to be this res
         self.raw_capture = PiRGBArray(self.camera, size=(self.width, self.height))
+        self.vid_stream = self.camera.capture_continuous(self.raw_capture, format='bgr', use_video_port=True)
+        
+        self.frame = None
+        self.stopped = False
         
         # Let camera warm up
         time.sleep(0.5)
@@ -35,23 +41,49 @@ class TacTip:
     def stream(self):
         
         # Capture frames from camera and loop over them
-        for frame in self.camera.capture_continuous(self.raw_capture, format='bgr', use_video_port=True):
+        for frame in self.vid_stream:
             # grab the np array of the image
-            image = frame.array
+            self.frame = frame.array
             
-            image = self.process_frame(image)
-            
-            # clear the stream before the next capture
+            # Clear the frame buffer in camera
             self.raw_capture.truncate()
             self.raw_capture.seek(0)
             
+            if self.stopped:
+                self.camera.close()
+                self.raw_capture.close()
+                self.vid_stream.close()
+                break
+                return
+            
+            
+    def process(self):
+        
+        while not self.stopped:
+            image = self.read()
+            image = self.process_frame(image)
+            
             # show the frame
-            cv2.imshow(self.name, image)
+            if self.display:
+                cv2.imshow(self.name, image)
             key = cv2.waitKey(1)
+            
+            print(1)
                         
             # Break on press of q
             if key == ord('q'):
-                break
+                self.stopped=True
+
+        
+    
+    def start_cap(self):
+        Thread(target=self.stream,args=()).start()
+    
+    def read(self):
+        return self.frame
+    
+    def stop(self):
+        self.stopped = True
     
     
     def process_frame(self, frame):
@@ -68,8 +100,12 @@ class TacTip:
         
         
 def main():
-    tactip = TacTip(640,480,32,'Tactip1', 121, -8, [20,80,590,420])
-    tactip.stream()
+    tactip = TacTip(640,480,32,'Tactip1', 121, -8, [10,80,590,420], True)
+    print('Starting Camera Stream...')
+    tactip.start_cap()
+    time.sleep(0.5)
+    print('Starting Frame Processing...')
+    tactip.process()
 
     return 0
 
